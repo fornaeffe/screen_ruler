@@ -67,7 +67,7 @@ function drawMeasures() {
   ctx.font = "12px Arial";
   ctx.fillStyle = "black";
 
-  measures.forEach(m => {
+  measures.forEach((m, i) => {
     ctx.beginPath();
     ctx.moveTo(m.start.x, m.start.y);
     ctx.lineTo(m.end.x, m.end.y);
@@ -77,6 +77,14 @@ function drawMeasures() {
     ctx.fillRect(m.midX - 15, m.midY - 10, 40, 15);
     ctx.fillStyle = "white";
     ctx.fillText(text, m.midX - 10, m.midY);
+    ctx.fillStyle = "black";
+
+    const text2 = `#${i + 1} ${m.length}px` + (i > 0 ? ` = ${
+      Math.round((m.length / measures[0].length + Number.EPSILON) * 100) / 100
+    } of #1` : "");
+    ctx.fillRect(0, 15 * i, 140, 15);
+    ctx.fillStyle = "white";
+    ctx.fillText(text2, 5, 10 + 15 * i);
     ctx.fillStyle = "black";
   });
 }
