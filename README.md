@@ -7,7 +7,7 @@ You're advised to check the code before using it.
 ![sample image](sample.png)
 
 ## Installation
-* download this repo in a folder on your PC
+* download this repo in a folder on your PC (Code -> Download ZIP)
 * Open Chrome -> Extensions -> Manage extensions
 * Enable "Developer mode"
 * Click on "Load unpacked" and select the folder you just downloaded
@@ -20,12 +20,6 @@ Click on "Extensions" button, and click on the Screen Ruler icon to start measur
 * another left click: stop the line
 
 **To stop measuring, click again the Screen Ruler icon**.
+
 ***Sometimes it needs two clicks on the Screen Ruler icon, IDK why...***
 
-## Installazione
-Per installare l'estensione:
-* scaricare questo repository in una cartella sul proprio PC
-* Aprire Chrome o Edge e andare nella pagina di gestione delle estensioni
-* Attivare la modalità "Sviluppatore"
-* Cliccare su "Carica estensione non pacchettizzata" o "Carica decompressa" e 
-selezionare la cartella dell'estensione
