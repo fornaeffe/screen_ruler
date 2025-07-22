@@ -20,6 +20,7 @@ Click on "Extensions" button, and click on the Screen Ruler icon to start measur
 * another left click: stop the line
 
 **To stop measuring, click again the Screen Ruler icon**.
+***Sometimes it needs two clicks on the Screen Ruler icon, IDK why...***
 
 ## Installazione
 Per installare l'estensione:
