@@ -1,0 +1,18 @@
+#measure-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999; /* sempre sopra */
+}
+
+.measure-label {
+  position: absolute;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  pointer-events: none;
+}
