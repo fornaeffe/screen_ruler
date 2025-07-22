@@ -1,8 +1,13 @@
+// @ts-check
+
+const zIndex = 999999;
+
 let isMeasuring = false;
 let overlay = null;
 let ctx = null;
 let measures = [];
 let startPoint = null;
+let panel = null;
 
 let listeners = []; // per rimuoverli facilmente
 
@@ -14,7 +19,7 @@ function createOverlay() {
   overlay.style.left = "0";
   overlay.style.width = "100vw";
   overlay.style.height = "100vh";
-  overlay.style.zIndex = "999999";
+  overlay.style.zIndex = zIndex.toString();
   overlay.style.cursor = "crosshair";
   overlay.style.background = "transparent";
   
@@ -26,7 +31,12 @@ function createOverlay() {
   canvas.style.height = "100%";
   canvas.style.pointerEvents = "none"; // il canvas non blocca, ma il div sì
 
+  panel = document.createElement("div");
+  panel.id = "measure-panel";
+  panel.style.zIndex = (zIndex + 1).toString();
+
   overlay.appendChild(canvas);
+  overlay.appendChild(panel);
   document.body.appendChild(overlay);
 
   ctx = canvas.getContext("2d");
@@ -34,12 +44,14 @@ function createOverlay() {
   // intercetta i click sul div, così la pagina sotto non li riceve
   overlay.addEventListener("click", handleClick);
   overlay.addEventListener("mousemove", handleMouseMove);
+  panel.addEventListener("click", (e) => e.stopPropagation());
 
   window.addEventListener("resize", resizeOverlay);
 
   // salviamo listener per rimuoverli poi
   listeners.push(["click", handleClick, overlay]);
   listeners.push(["mousemove", handleMouseMove, overlay]);
+  listeners.push(["click", (e) => e.stopPropagation(), panel]);
   listeners.push(["resize", resizeOverlay, window]);
 }
 
@@ -77,14 +89,6 @@ function drawMeasures() {
     ctx.fillRect(m.midX - 15, m.midY - 10, 40, 15);
     ctx.fillStyle = "white";
     ctx.fillText(text, m.midX - 10, m.midY);
-    ctx.fillStyle = "black";
-
-    const text2 = `#${i + 1} ${m.length}px` + (i > 0 ? ` = ${
-      Math.round((m.length / measures[0].length + Number.EPSILON) * 100) / 100
-    } of #1` : "");
-    ctx.fillRect(0, 15 * i, 140, 15);
-    ctx.fillStyle = "white";
-    ctx.fillText(text2, 5, 10 + 15 * i);
     ctx.fillStyle = "black";
   });
 }
@@ -128,6 +132,16 @@ function handleClick(e) {
       midY: (startPoint.y + endPoint.y) / 2
     });
 
+    panel.innerHTML = ""; // pulisci il pannello
+    measures.forEach((m, i) => {
+      const text = `#${i + 1} ${m.length}px` + (i > 0 ? ` = ${
+        Math.round((m.length / measures[0].length + Number.EPSILON) * 100) / 100
+      } of #1` : "");
+      const div = document.createElement("div");
+      div.textContent = text;
+      panel.appendChild(div);
+    });
+
     startPoint = null;
     drawMeasures();
   }
@@ -160,6 +174,7 @@ function stopMeasureMode() {
     overlay.remove();
     overlay = null;
     ctx = null;
+    panel = null;
   }
 
   // Rimuovi listener (anche resize)
@@ -170,6 +185,7 @@ function stopMeasureMode() {
 }
 
 // Ricevi messaggi dal background
+// @ts-ignore
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "startMeasure") {
     startMeasureMode();

@@ -1,18 +1,12 @@
-#measure-overlay {
+#measure-panel {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999999; /* sempre sopra */
-}
-
-.measure-label {
-  position: absolute;
-  background: rgba(0,0,0,0.7);
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
   color: white;
-  font-size: 12px;
-  padding: 2px 4px;
-  border-radius: 3px;
-  pointer-events: none;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+
+  cursor: auto;
 }
