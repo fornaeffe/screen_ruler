@@ -18,6 +18,8 @@ Click on "Extensions" button, click on the Screen Ruler icon, and click Start Me
 * on the page, the cursor should change to crosshairs
 * left click: start a line
 * another left click: stop the line
+* the first line has a default value of 1, for the subsequent lines it shows the length relative to the first line value (alongside pixel length)
+* you can change the first line value, and the relative values of subsequent lines will be updated.
 
 **To stop measuring, click again the Screen Ruler icon and click Stop Measuring**.
 

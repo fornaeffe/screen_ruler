@@ -26,13 +26,27 @@ let startPoint = null;
  * @type {HTMLDivElement | null}
  */
 let panel = null;
+/**
+ * @type {HTMLInputElement | null}
+ */
+let scaleInput = null;
 
 /**
  * @type {([string, (e: any) => void, HTMLElement | Window])[]}
  */
 let listeners = []; // per rimuoverli facilmente
 
+/**
+ * @type {number}
+ */
+let scale = 1;
+
+
+
+
 function createOverlay() {
+  scale = 1;
+
   overlay = document.createElement("div");
   overlay.id = "measure-overlay";
   overlay.style.position = "fixed";
@@ -43,7 +57,7 @@ function createOverlay() {
   overlay.style.zIndex = zIndex.toString();
   overlay.style.cursor = "crosshair";
   overlay.style.background = "transparent";
-  
+
   // qui aggiungiamo un canvas dentro al div
   const canvas = document.createElement("canvas");
   canvas.width = window.innerWidth;
@@ -56,6 +70,11 @@ function createOverlay() {
   panel.id = "measure-panel";
   panel.style.zIndex = (zIndex + 1).toString();
 
+  scaleInput = document.createElement("input");
+  scaleInput.type = "number";
+  scaleInput.value = scale.toString();
+  scaleInput.addEventListener("change", handleScaleChange);
+
   overlay.appendChild(canvas);
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
@@ -65,15 +84,16 @@ function createOverlay() {
   // intercetta i click sul div, così la pagina sotto non li riceve
   overlay.addEventListener("click", handleClick);
   overlay.addEventListener("mousemove", handleMouseMove);
-  panel.addEventListener("click", (e) => e.stopPropagation());
+  panel.addEventListener("click", handlePanelClick);
 
   window.addEventListener("resize", resizeOverlay);
 
   // salviamo listener per rimuoverli poi
   listeners.push(["click", handleClick, overlay]);
   listeners.push(["mousemove", handleMouseMove, overlay]);
-  listeners.push(["click", (e) => e.stopPropagation(), panel]);
+  listeners.push(["click", handlePanelClick, panel]);
   listeners.push(["resize", resizeOverlay, window]);
+  listeners.push(["change", handleScaleChange, scaleInput]);
 }
 
 function resizeOverlay() {
@@ -93,7 +113,7 @@ function resizeOverlay() {
 function distance(a, b) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
-  return Math.round(Math.sqrt(dx*dx + dy*dy));
+  return Math.round(Math.sqrt(dx * dx + dy * dy));
 }
 
 function drawMeasures() {
@@ -127,7 +147,7 @@ function handleMouseMove(e) {
   if (!isMeasuring || !startPoint) return;
 
   if (!ctx) throw new Error("ctx is null");
-  
+
 
   drawMeasures();
 
@@ -170,22 +190,49 @@ function handleClick(e) {
       midY: (startPoint.y + endPoint.y) / 2
     });
 
-    panel.innerHTML = ""; // pulisci il pannello
-    measures.forEach((m, i) => {
-      const text = `#${i + 1} ${m.length}px` + (i > 0 ? ` = ${
-        Math.round((m.length / measures[0].length + Number.EPSILON) * 100) / 100
-      } of #1` : "");
-      const div = document.createElement("div");
-      div.textContent = text;
-      if (!panel) throw new Error("panel is null");
-      panel.appendChild(div);
-    });
+    updatePanel();
 
     startPoint = null;
     drawMeasures();
   }
 }
 
+/**
+ * @param {MouseEvent} e
+ */
+function handlePanelClick(e) {
+  e.stopPropagation(); // non far propagare il click al div overlay
+}
+
+/**
+ * @param {Event} e
+ */
+function handleScaleChange(e) {
+  if (!scaleInput) return;
+  scale = parseFloat(scaleInput.value);
+  updatePanel();
+}
+
+function updatePanel() {
+  if (!panel) throw new Error("panel is null");
+
+
+  panel.innerHTML = ""; // pulisci il pannello
+  measures.forEach((m, i) => {
+    if (!scaleInput) throw new Error("scaleInput is null");
+    const text = `#${i + 1} ${m.length}px = ` + (i > 0 ? `${Math.round((m.length / measures[0].length * scale + Number.EPSILON) * 100) / 100}` : "");
+    const div = document.createElement("div");
+    div.textContent = text;
+
+    if (i === 0) {
+
+      div.appendChild(scaleInput);
+    }
+
+    if (!panel) throw new Error("panel is null");
+    panel.appendChild(div);
+  });
+}
 
 
 // Avvio
@@ -208,19 +255,22 @@ function stopMeasureMode() {
   isMeasuring = false;
   startPoint = null;
 
+  // Rimuovi listener (anche resize)
+  listeners.forEach(([event, fn, target]) => {
+    (target || document).removeEventListener(event, fn);
+  });
+  listeners = [];
+
   // Rimuovi overlay e canvas
   if (overlay) {
     overlay.remove();
     overlay = null;
     ctx = null;
     panel = null;
+    scaleInput = null;
   }
 
-  // Rimuovi listener (anche resize)
-  listeners.forEach(([event, fn, target]) => {
-    (target || document).removeEventListener(event, fn);
-  });
-  listeners = [];
+  
 }
 
 // Ricevi messaggi dal background
