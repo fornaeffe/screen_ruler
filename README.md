@@ -13,13 +13,12 @@ You're advised to check the code before using it.
 * Click on "Load unpacked" and select the folder you just downloaded
 
 ## How to use it
-Click on "Extensions" button, and click on the Screen Ruler icon to start measuring:
+Click on "Extensions" button, click on the Screen Ruler icon, and click Start Measuring:
 
 * on the page, the cursor should change to crosshairs
 * left click: start a line
 * another left click: stop the line
 
-**To stop measuring, click again the Screen Ruler icon**.
+**To stop measuring, click again the Screen Ruler icon and click Stop Measuring**.
 
-***Sometimes it needs two clicks on the Screen Ruler icon, IDK why...***
 

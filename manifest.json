@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Screen Ruler",
-  "version": "0.1",
-  "description": "Misura distanze in pixel sulla pagina",
+  "version": "0.2",
+  "description": "Distance measuring tool for web pages",
   "permissions": ["scripting", "activeTab"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Attiva modalità misura"
+    "default_title": "Screen Ruler"
   }
 }
