@@ -1,14 +1,35 @@
 // @ts-check
 
+// @ts-ignore
+window.measureToolInjected = true;
+
 const zIndex = 999999;
 
 let isMeasuring = false;
+/**
+ * @type {HTMLDivElement | null}
+ */
 let overlay = null;
+/**
+ * @type {CanvasRenderingContext2D | null}
+ */
 let ctx = null;
+/**
+ * @type {{ start: { x: number; y: number; }; end: { x: number; y: number; }; length: number; midX: number; midY: number; }[]}
+ */
 let measures = [];
+/**
+ * @type {{ x: number; y: number; } | null}
+ */
 let startPoint = null;
+/**
+ * @type {HTMLDivElement | null}
+ */
 let panel = null;
 
+/**
+ * @type {([string, (e: any) => void, HTMLElement | Window])[]}
+ */
 let listeners = []; // per rimuoverli facilmente
 
 function createOverlay() {
@@ -58,12 +79,17 @@ function createOverlay() {
 function resizeOverlay() {
   if (!overlay) return;
   const canvas = overlay.querySelector("canvas");
+  if (!canvas) throw new Error("Canvas not found in overlay");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   drawMeasures();
 }
 
 
+/**
+ * @param {{ x: number; y: number; }} a
+ * @param {{ x: number; y: number; }} b
+ */
 function distance(a, b) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
@@ -80,6 +106,7 @@ function drawMeasures() {
   ctx.fillStyle = "black";
 
   measures.forEach((m, i) => {
+    if (!ctx) throw new Error("ctx is null");
     ctx.beginPath();
     ctx.moveTo(m.start.x, m.start.y);
     ctx.lineTo(m.end.x, m.end.y);
@@ -93,8 +120,14 @@ function drawMeasures() {
   });
 }
 
+/**
+ * @param {MouseEvent} e
+ */
 function handleMouseMove(e) {
   if (!isMeasuring || !startPoint) return;
+
+  if (!ctx) throw new Error("ctx is null");
+  
 
   drawMeasures();
 
@@ -115,8 +148,13 @@ function handleMouseMove(e) {
   ctx.fillText(`${len}px`, midX - 10, midY);
 }
 
+/**
+ * @param {MouseEvent} e
+ */
 function handleClick(e) {
   e.preventDefault(); // blocca l’interazione con la pagina
+
+  if (!panel) throw new Error("panel is null");
 
   if (!startPoint) {
     startPoint = { x: e.clientX, y: e.clientY };
@@ -139,6 +177,7 @@ function handleClick(e) {
       } of #1` : "");
       const div = document.createElement("div");
       div.textContent = text;
+      if (!panel) throw new Error("panel is null");
       panel.appendChild(div);
     });
 
